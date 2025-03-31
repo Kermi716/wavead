@@ -9,7 +9,7 @@ local ffi = require 'ffi'
 local faicons = require('fAwesome6')
 local hotkey = require 'mimgui_hotkeys'
 
-local my_script_version = "1.0" 
+local my_script_version = "1.1" 
 local download_url = ""
 local json_url = "https://raw.githubusercontent.com/Kermi716/wavead/refs/heads/main/autoupdate.json" 
 local update_available = new.bool(false)
