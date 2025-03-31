@@ -41,17 +41,17 @@ function check_for_updates()
                 update_available[0] = true
                 update_version = new.char[32](version_info.latest_version)
                 download_url = version_info.download_url
-                sampAddChatMessage("{ADFF2F}[WaveAd] Доступно обновление! Последняя версия: " .. version_info.latest_version, 0xFFFFFF)
+                sampAddChatMessage("{ADFF2F}[WaveAd] Доступно обновление! Последняя версия: " .. version_info.latest_version)
                 sampAddChatMessage("{00FFFF}Доступно обновление: " .. version_info.latest_version)
             else
-                sampAddChatMessage("{ADFF2F}[WaveAd] У вас установлена последняя версия.", 0xFFFFFF)
+                sampAddChatMessage("{ADFF2F}[WaveAd] У вас установлена последняя версия.")
                 update_available[0] = false
             end
         else
-            sampAddChatMessage("{FF0000}[WaveAd] Неверный формат файла версии", 0xFF0000)
+            sampAddChatMessage("{FF0000}[WaveAd] Неверный формат файла версии")
         end
     else
-        sampAddChatMessage("{FF0000}[WaveAd] Невозможно получить информацию о последней версии.", 0xFF0000)
+        sampAddChatMessage("{FF0000}[WaveAd] Невозможно получить информацию о последней версии.")
     end
 end
 
