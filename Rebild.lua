@@ -59,8 +59,10 @@ function download_update()
     if download_url ~= "" then
         local response = requests.get(download_url)
         if response.status_code == 200 then
+            local utf8_text = response.text 
+            local cp1251_text = encoding.convert(utf8_text, 'UTF8', 'CP1251') 
             local file = io.open("moonloader\\Rebild.lua", "w")
-            file:write(response.text)
+            file:write(cp1251_text)
             file:close()
             sampAddChatMessage("{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
             addPopupMessage("{00FFFF}Обновление загружено. Перезапустите скрипт!")
