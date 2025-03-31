@@ -9,15 +9,15 @@ local ffi = require 'ffi'
 local faicons = require('fAwesome6')
 local hotkey = require 'mimgui_hotkeys'
 
+encoding.default = 'CP1251'
+local u8 = encoding.UTF8
+local new = imgui.new
+
 local my_script_version = "1.1" 
 local download_url = ""
 local json_url = "https://raw.githubusercontent.com/Kermi716/wavead/refs/heads/main/autoupdate.json" 
 local update_available = new.bool(false)
 local update_version = new.char[32]("")
-
-encoding.default = 'CP1251'
-local u8 = encoding.UTF8
-local new = imgui.new
 
 function check_for_updates()
     local response = requests.get(json_url)
