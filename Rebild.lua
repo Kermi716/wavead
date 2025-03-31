@@ -37,12 +37,12 @@ function check_for_updates()
         local version_info = json.decode(response.text)
         if version_info.latest_version and version_info.download_url then
             local comparison = compareVersions(my_script_version, version_info.latest_version)
-            if comparison < 0 then -- Если текущая версия меньше
+            if comparison < 0 then -
                 update_available[0] = true
                 update_version = new.char[32](version_info.latest_version)
                 download_url = version_info.download_url
                 sampAddChatMessage("{ADFF2F}[WaveAd] Доступно обновление! Последняя версия: " .. version_info.latest_version, 0xFFFFFF)
-                addPopupMessage("{00FFFF}Доступно обновление: " .. version_info.latest_version)
+                sampAddChatMessage("{00FFFF}Доступно обновление: " .. version_info.latest_version)
             else
                 sampAddChatMessage("{ADFF2F}[WaveAd] У вас установлена последняя версия.", 0xFFFFFF)
                 update_available[0] = false
@@ -1414,6 +1414,8 @@ function main()
     hotkey.Text.NoKey = u8'Пусто'
     hotkey.Text.WaitForKey = u8'Ожидание клавиши...'
     
+    check_for_updates()
+
     while true do
         wait(0)
         processSpam()
