@@ -11,6 +11,7 @@ local hotkey = require 'mimgui_hotkeys'
 
 encoding.default = 'CP1251'
 local u8 = encoding.UTF8
+local function recode(u8) return encoding.UTF8:decode(u8) end
 local new = imgui.new
 
 local my_script_version = "1.2" 
