@@ -9,8 +9,9 @@ local ffi = require 'ffi'
 local faicons = require('fAwesome6')
 local hotkey = require 'mimgui_hotkeys'
 
-encoding.default = 'CP1251'
-local u8 = encoding.UTF8
+
+encoding.default = *CP1251' 
+local function u8d(s) return encoding.UTF8:decode(s) end
 local new = imgui.new
 
 local my_script_version = "1.2" 
@@ -41,17 +42,17 @@ function check_for_updates()
                 update_available[0] = true
                 update_version = new.char[32](version_info.latest_version)
                 download_url = version_info.download_url
-                sampAddChatMessage("{ADFF2F}[WaveAd] Доступно обновление! Последняя версия: " .. version_info.latest_version)
-                sampAddChatMessage("{00FFFF}Доступно обновление: " .. version_info.latest_version)
+                sampAddChatMessage(u8d"{ADFF2F}[WaveAd] Доступно обновление! Последняя версия: " .. version_info.latest_version)
+                sampAddChatMessage(u8d"{00FFFF}Доступно обновление: " .. version_info.latest_version)
             else
-                sampAddChatMessage("{ADFF2F}[WaveAd] У вас установлена последняя версия.")
+                sampAddChatMessage(u8d"{ADFF2F}[WaveAd] У вас установлена последняя версия.")
                 update_available[0] = false
             end
         else
-            sampAddChatMessage("{FF0000}[WaveAd] Неверный формат файла версии")
+            sampAddChatMessage(u8d"{FF0000}[WaveAd] Неверный формат файла версии")
         end
     else
-        sampAddChatMessage("{FF0000}[WaveAd] Невозможно получить информацию о последней версии.")
+        sampAddChatMessage(u8d"{FF0000}[WaveAd] Невозможно получить информацию о последней версии.")
     end
 end
 
@@ -64,13 +65,13 @@ function download_update()
             local file = io.open("moonloader\\Rebild.lua", "w")
             file:write(cp1251_text)
             file:close()
-            sampAddChatMessage("{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
-            addPopupMessage("{00FFFF}Обновление загружено. Перезапустите скрипт!")
+            sampAddChatMessage(u8d"{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
+            addPopupMessage(u8d"{00FFFF}Обновление загружено. Перезапустите скрипт!")
         else
-            sampAddChatMessage("{FF0000}[WaveAd] Невозможно загрузить новую версию.", 0xFF0000)
+            sampAddChatMessage(u8d"{FF0000}[WaveAd] Невозможно загрузить новую версию.", 0xFF0000)
         end
     else
-        sampAddChatMessage("{FF0000}[WaveAd] Новая версия не обнаружена. Проверьте обновления!", 0xFFFFFF)
+        sampAddChatMessage(u8d"{FF0000}[WaveAd] Новая версия не обнаружена. Проверьте обновления!", 0xFFFFFF)
     end
 end
 
@@ -83,12 +84,12 @@ imgui.OnInitialize(function()
     if doesFileExist(fontPath) then
         example = imgui.GetIO().Fonts:AddFontFromFileTTF(fontPath, fontSize, nil, glyphRanges)
         if example == nil then
-            print("Не удалось загрузить шрифт из " .. fontPath)
+            print(u8d"Не удалось загрузить шрифт из " .. fontPath)
         else
-            print("Шрифт успешно загружен из " .. fontPath)
+            print(u8d"Шрифт успешно загружен из " .. fontPath)
         end
     else
-        print("Файл шрифта не найден по пути " .. fontPath .. ", используется шрифт по умолчанию")
+        print(u8d"Файл шрифта не найден по пути " .. fontPath .. ", используется шрифт по умолчанию")
         example = imgui.GetIO().Fonts:AddFontDefault()
     end
 end)
@@ -873,18 +874,18 @@ imgui.OnFrame(
         local style = imgui.GetStyle()
         local originalAlpha = style.Alpha 
         style.Alpha = windowAnimationProgress[0] 
-    imgui.Begin(u8'WaveAd', WinState, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoScrollbar)
+    imgui.Begin(u8d'WaveAd', WinState, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoScrollbar)
     imgui.PushFont(example)
     imgui.SetCursorPosX(670)
-    if imgui.ColoredButton(u8' X ', 'F94242', 50) then
+    if imgui.ColoredButton(u8d' X ', 'F94242', 50) then
         WinState[0] = false 
     end
     imgui.SetCursorPos(imgui.ImVec2(20, 20))
     if imgui.BeginChild('Name', imgui.ImVec2(180, 256), true) then
         local buttonLabels = {
-            u8'Создать пиар',
-            u8'Настройка пиар',
-            u8'Общие настройки'
+            u8d'Создать пиар',
+            u8d'Настройка пиар',
+            u8d'Общие настройки'
         }
         
         local buttonHeight = 78.8
@@ -961,15 +962,15 @@ imgui.OnFrame(
             for i = 1, #binders do
                 local binder = binders[i]
                 imgui.SetNextItemWidth(150)
-                imgui.InputTextWithHint(u8'Сообщение##' .. i, u8'Текст', binder.inputField, 256)
+                imgui.InputTextWithHint(u8d'Сообщение##' .. i, u8'Текст', binder.inputField, 256)
                 imgui.SameLine()
                 
                 if not binder.randomize then
                     imgui.SetNextItemWidth(100)
-                    imgui.InputInt(u8'Задержка (сек)##' .. i, binder.delayField, 1, 5)
+                    imgui.InputInt(u8d'Задержка (сек)##' .. i, binder.delayField, 1, 5)
                     if binder.delayField[0] < 1 then binder.delayField[0] = 1 end
                 else
-                    imgui.Text(u8'Рандомизация включена')
+                    imgui.Text(u8d'Рандомизация включена')
                 end
             end
             
@@ -983,7 +984,7 @@ imgui.OnFrame(
                     randomDelays = {},
                     currentDelayIndex = 1,
                     lastSendTime = -math.huge,
-                    shortName = new.char[32](u8("Биндер #" .. (#binders + 1))),
+                    shortName = new.char[32](u8d("Биндер #" .. (#binders + 1))),
                     mediaEnabled = new.bool(false),
                     mediaEnabledAnimation = new.float(0.0),
                     mediaStation = new.int(0),
@@ -1012,30 +1013,30 @@ imgui.OnFrame(
                 local binder = binders[i]
                 local shortName = u8:decode(ffi.string(binder.shortName))
                 if imgui.CollapsingHeader(u8(shortName .. '##' .. i)) then
-                    imgui.CustomToggle(u8'Включить автопиар', binder.toggleState, nil, nil, binder.animationProgress)
+                    imgui.CustomToggle(u8d'Включить автопиар', binder.toggleState, nil, nil, binder.animationProgress)
                     
-                    imgui.CustomToggle(u8'Режим /vr', binder.autoEnter, nil, nil, binder.autoEnterAnimation)
+                    imgui.CustomToggle(u8d'Режим /vr', binder.autoEnter, nil, nil, binder.autoEnterAnimation)
                     imgui.SameLine()
-                    imgui.CustomToggle(u8'Режим СМИ', binder.mediaEnabled, nil, nil, binder.mediaEnabledAnimation)
+                    imgui.CustomToggle(u8d'Режим СМИ', binder.mediaEnabled, nil, nil, binder.mediaEnabledAnimation)
 
                     if not binder.tempShortName then
                         binder.tempShortName = new.char[32](binder.shortName)
                     end
                     
                     imgui.SetNextItemWidth(100)
-                    imgui.InputTextWithHint(u8'Краткое название##' .. i, u8'Название', binder.tempShortName, 32)
+                    imgui.InputTextWithHint(u8d'Краткое название##' .. i, u8'Название', binder.tempShortName, 32)
                     
                     imgui.SameLine()
-                    if imgui.Button(u8'OK##' .. i) then
-                        local newShortName = u8:decode(ffi.string(binder.tempShortName))
+                    if imgui.Button(u8d'OK##' .. i) then
+                        local newShortName = u8d:decode(ffi.string(binder.tempShortName))
                         binder.shortName = new.char[32](u8(newShortName))
                     end
                     
                     if binder.mediaEnabled[0] then
                         local stations = {
-                            u8'Los Santos СМИ',
-                            u8'Las Venturas СМИ',
-                            u8'San Fierro СМИ'
+                            u8d'Los Santos СМИ',
+                            u8d'Las Venturas СМИ',
+                            u8d'San Fierro СМИ'
                         }
                         local cStations = ffi.new("const char*[?]", #stations + 1)
                         for j, station in ipairs(stations) do
@@ -1043,17 +1044,17 @@ imgui.OnFrame(
                         end
                         cStations[#stations] = nil
                         imgui.SetNextItemWidth(150)
-                        imgui.Combo(u8'Радиостанция', binder.mediaStation, cStations, #stations)
+                        imgui.Combo(u8d'Радиостанция', binder.mediaStation, cStations, #stations)
                     end
                     
-                    if imgui.Button(u8'Рандомизация') then
+                    if imgui.Button(u8d'Рандомизация') then
                         binder.randomize = true
                         if #binder.randomDelays == 0 then
                             table.insert(binder.randomDelays, new.int(binder.delayField[0]))
                         end
                     end
                     imgui.SameLine()
-                    if imgui.Button(u8'Вернуть') then
+                    if imgui.Button(u8d'Вернуть') then
                         binder.randomize = false
                         binder.randomDelays = {}
                         binder.currentDelayIndex = 1
@@ -1062,14 +1063,14 @@ imgui.OnFrame(
                     if binder.randomize then
                         for j = 1, #binder.randomDelays do
                             imgui.SetNextItemWidth(100)
-                            imgui.InputInt(u8'Задержка #' .. j, binder.randomDelays[j], 1, 5)
+                            imgui.InputInt(u8d'Задержка #' .. j, binder.randomDelays[j], 1, 5)
                             if binder.randomDelays[j][0] < 1 then binder.randomDelays[j][0] = 1 end
                         end
-                        if imgui.Button(u8' + ') then
+                        if imgui.Button(u8d' + ') then
                             table.insert(binder.randomDelays, new.int(1))
                         end
                         imgui.SameLine()
-                        if imgui.Button(u8' - ') and #binder.randomDelays > 1 then
+                        if imgui.Button(u8d' - ') and #binder.randomDelays > 1 then
                             table.remove(binder.randomDelays, #binder.randomDelays)
                             if binder.currentDelayIndex > #binder.randomDelays then
                                 binder.currentDelayIndex = 1
@@ -1078,7 +1079,7 @@ imgui.OnFrame(
                     end
                     
                     imgui.Separator()
-                    imgui.Text(u8'Горячая клавиша:')
+                    imgui.Text(u8d'Горячая клавиша:')
                     if hotkey.ShowHotKey(binder.hotkeyName, imgui.ImVec2(200, 25)) then
                         binder.hotkey = hotkey.GetHotKey(binder.hotkeyName)
                         hotkey.EditHotKey(binder.hotkeyName, binder.hotkey)
@@ -1093,7 +1094,7 @@ imgui.OnFrame(
             end
             
             imgui.SetNextItemWidth(100)
-            if imgui.Combo(u8'Тема', currentTheme, themeNames, #themes) then
+            if imgui.Combo(u8d'Тема', currentTheme, themeNames, #themes) then
                 themes[currentTheme[0] + 1].apply()
                 local newConfig = { binders = {} }
                 for i, binder in ipairs(binders) do
@@ -1118,14 +1119,14 @@ imgui.OnFrame(
                 saveJson("Spamer.json", newConfig)
                 config = newConfig
             end
-            if imgui.CustomToggle(u8'Показывать всплывающие уведомления', showPopupNotifications, nil, nil, showPopupNotificationsAnimation) then
+            if imgui.CustomToggle(u8d'Показывать всплывающие уведомления', showPopupNotifications, nil, nil, showPopupNotificationsAnimation) then
                 local newConfig = config
                 newConfig.showPopupNotifications = showPopupNotifications[0]
                 if saveJson("Spamer.json", newConfig) then
                     config = newConfig
                 end
             end
-            imgui.Text(u8'Горячая клавиша меню:')
+            imgui.Text(u8d'Горячая клавиша меню:')
             if hotkey.ShowHotKey(menuHotkeyName, imgui.ImVec2(150, 25)) then
                 menuHotkey = hotkey.GetHotKey(menuHotkeyName)
                 hotkey.EditHotKey(menuHotkeyName, menuHotkey)
@@ -1135,10 +1136,10 @@ imgui.OnFrame(
                 saveJson("Spamer.json", newConfig)
             end
 
-            imgui.Text(u8'Команда для открытия:')
+            imgui.Text(u8d'Команда для открытия:')
             local commandBuffer = new.char[32](menuCommand) 
             imgui.SetNextItemWidth(150)
-            if imgui.InputText(u8'##MenuCommand', commandBuffer, 32) then
+            if imgui.InputText(u8d'##MenuCommand', commandBuffer, 32) then
                 menuCommand = ffi.string(commandBuffer) 
                 sampRegisterChatCommand(menuCommand, function() 
                     WinState[0] = not WinState[0] 
@@ -1178,37 +1179,37 @@ imgui.OnFrame(
                 config = newConfig
             end
             if imgui.CollapsingHeader(u8'Обновления') then
-                imgui.Text(u8("Текущая версия: " .. my_script_version))
+                imgui.Text(u8d("Текущая версия: " .. my_script_version))
                 if update_available[0] then
-                    imgui.Text(u8("Доступна версия: " .. ffi.string(update_version)))
+                    imgui.Text(u8d("Доступна версия: " .. ffi.string(update_version)))
                 end
                 
-                if imgui.Button(u8'Проверить обновления') then
+                if imgui.Button(u8d'Проверить обновления') then
                     lua_thread.create(check_for_updates)
                 end
                 
                 if update_available[0] then
                     imgui.SameLine()
-                    if imgui.Button(u8'Загрузить обновление') then
+                    if imgui.Button(u8d'Загрузить обновление') then
                         lua_thread.create(download_update)
                     end
                 end
             end
-            if imgui.CollapsingHeader(u8'Telegram') then
+            if imgui.CollapsingHeader(u8d'Telegram') then
                 imgui.SetNextItemWidth(200)
-                imgui.InputTextWithHint(u8'Chat ID', u8'Введите Chat ID', telegramChatId, 64)
+                imgui.InputTextWithHint(u8d'Chat ID', u8d'Введите Chat ID', telegramChatId, 64)
                 
                 imgui.SetNextItemWidth(200)
-                imgui.InputTextWithHint(u8'Bot Token', u8'Введите Token бота', telegramToken, 64)
+                imgui.InputTextWithHint(u8d'Bot Token', u8d'Введите Token бота', telegramToken, 64)
                 
                 if imgui.Button(u8'Проверить') then
                     local chatIdStr = ffi.string(telegramChatId)
                     local tokenStr = ffi.string(telegramToken)
                     if chatIdStr ~= "" and tokenStr ~= "" then
                         sendTelegramNotification(chatIdStr, tokenStr, "Я подключен")
-                        sampAddChatMessage("{ADFF2F}[WaveAd] Отправлено тестовое сообщение в Telegram!", -1)
+                        sampAddChatMessage(u8d"{ADFF2F}[WaveAd] Отправлено тестовое сообщение в Telegram!", -1)
                     else
-                        sampAddChatMessage("{DC143C}[WaveAd] Введите Chat ID и Token!", -1)
+                        sampAddChatMessage(u8d"{DC143C}[WaveAd] Введите Chat ID и Token!", -1)
                     end
                 end
             end
@@ -1225,7 +1226,7 @@ imgui.OnFrame(
                         
                         if timeLeft < 0 then timeLeft = 0 end
                         
-                        imgui.TextWrapped(u8(string.format("%s: '%s' будет отправлено через %.1f сек", shortName, text, timeLeft)))
+                        imgui.TextWrapped(u8d(string.format("%s: '%s' будет отправлено через %.1f сек", shortName, text, timeLeft)))
                     end
                 end
                 imgui.PopTextWrapPos()
@@ -1269,7 +1270,7 @@ imgui.OnFrame(
                 local oldAlpha = style.Alpha
                 style.Alpha = alpha
                 
-                imgui.Begin(u8'Popup##'..i, nil, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoResize + 
+                imgui.Begin(u8d'Popup##'..i, nil, imgui.WindowFlags.NoTitleBar + imgui.WindowFlags.NoResize + 
                     imgui.WindowFlags.NoMove + imgui.WindowFlags.NoSavedSettings)
                 
                 imgui.SetCursorPos(imgui.ImVec2(5, 5))
@@ -1385,10 +1386,10 @@ function main()
         wait(0)
     until sampIsLocalPlayerSpawned()
 
-    sampAddRandomColorMessage('[WaveAd] ЗАГРУЖАЮСЬ')
+    sampAddRandomColorMessage(u8d'[WaveAd] ЗАГРУЖАЮСЬ')
     wait(1500)  
-    sampAddRandomColorMessage('[WaveAd] Все!')
-    sampAddRandomColorMessage('[WaveAd] команда /' .. menuCommand)
+    sampAddRandomColorMessage(u8d'[WaveAd] Все!')
+    sampAddRandomColorMessage(u8d'[WaveAd] команда /' .. menuCommand)
     sampRegisterChatCommand(menuCommand, function() 
         WinState[0] = not WinState[0] 
     end)
@@ -1405,16 +1406,16 @@ function main()
         lua_thread.create(function()
             get_telegram_updates(chat_id, token)
         end)
-        sampAddRandomColorMessage("[WaveAd] Telegram-бот запущен!", -1)
+        sampAddRandomColorMessage(u8d"[WaveAd] Telegram-бот запущен!", -1)
     else
-        sampAddChatMessage("{DC143C}[WaveAd] Укажите Chat ID и Token для Telegram в настройках!", -1)
+        sampAddChatMessage(u8d"{DC143C}[WaveAd] Укажите Chat ID и Token для Telegram в настройках!", -1)
     end
     
     menuHotkey = config.menuHotkey or {0x00}
     hotkey.CancelKey = 0x2E
     hotkey.RemoveKey = 0x1B
-    hotkey.Text.NoKey = u8'Пусто'
-    hotkey.Text.WaitForKey = u8'Ожидание клавиши...'
+    hotkey.Text.NoKey = u8d'Пусто'
+    hotkey.Text.WaitForKey = u8d'Ожидание клавиши...'
     
     check_for_updates()
 
