@@ -37,7 +37,7 @@ function check_for_updates()
         local version_info = json.decode(response.text)
         if version_info.latest_version and version_info.download_url then
             local comparison = compareVersions(my_script_version, version_info.latest_version)
-            if comparison < 0 then -
+            if comparison < 0 then
                 update_available[0] = true
                 update_version = new.char[32](version_info.latest_version)
                 download_url = version_info.download_url
