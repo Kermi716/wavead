@@ -60,15 +60,22 @@ function download_update()
     if download_url ~= "" then
         local response = requests.get(download_url)
         if response.status_code == 200 then
-            local utf8_text = response.text 
-            local cp1251_text = encoding.convert(utf8_text, 'UTF8', 'CP1251') 
-            local file = io.open("moonloader\\Rebild.lua", "w")
-            file:write(cp1251_text)
-            file:close()
-            sampAddChatMessage(u8d"{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
-            addPopupMessage(u8d"{00FFFF}Обновление загружено. Перезапустите скрипт!")
+            local utf8_text = response.text
+            if utf8_text and utf8_text ~= "" then  -- Проверка на валидность текста
+                local file = io.open("moonloader\\Rebild.lua", "wb")  -- Открытие в двоичном режиме
+                if file then
+                    file:write(utf8_text)  -- Запись текста как есть, без преобразования
+                    file:close()
+                    sampAddChatMessage(u8d"{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
+                    addPopupMessage(u8d"{00FFFF}Обновление загружено. Перезапустите скрипт!")
+                else
+                    sampAddChatMessage(u8d"{FF0000}[WaveAd] Ошибка при записи файла обновления!", 0xFF0000)
+                end
+            else
+                sampAddChatMessage(u8d"{FF0000}[WaveAd] Получены некорректные данные обновления!", 0xFF0000)
+            end
         else
-            sampAddChatMessage(u8d"{FF0000}[WaveAd] Невозможно загрузить новую версию.", 0xFF0000)
+            sampAddChatMessage(u8d"{FF0000}[WaveAd] Невозможно загрузить новую версию. Код ошибки: " .. response.status_code, 0xFF0000)
         end
     else
         sampAddChatMessage(u8d"{FF0000}[WaveAd] Новая версия не обнаружена. Проверьте обновления!", 0xFFFFFF)
