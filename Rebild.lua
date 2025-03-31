@@ -15,16 +15,29 @@ local new = imgui.new
 
 local my_script_version = "1.2" 
 local download_url = ""
-local json_url = "https://raw.githubusercontent.com/Kermi716/wavead/refs/heads/main/autoupdate.json" 
+local json_url = "https://raw.githubusercontent.com/Kermi716/wavead/main/autoupdate.json" 
 local update_available = new.bool(false)
 local update_version = new.char[32]("")
+
+function compareVersions(v1, v2)
+    local v1_parts = {v1:match("(%d+)%.(%d+)%.?(%d*)")}
+    local v2_parts = {v2:match("(%d+)%.(%d+)%.?(%d*)")}
+    for i = 1, 3 do
+        local n1 = tonumber(v1_parts[i]) or 0
+        local n2 = tonumber(v2_parts[i]) or 0
+        if n1 < n2 then return -1 end
+        if n1 > n2 then return 1 end
+    end
+    return 0
+end
 
 function check_for_updates()
     local response = requests.get(json_url)
     if response.status_code == 200 then
         local version_info = json.decode(response.text)
-        if version_info.latest_version ~= nil and version_info.download_url ~= nil then
-            if version_info.latest_version ~= my_script_version then
+        if version_info.latest_version and version_info.download_url then
+            local comparison = compareVersions(my_script_version, version_info.latest_version)
+            if comparison < 0 then -- Если текущая версия меньше
                 update_available[0] = true
                 update_version = new.char[32](version_info.latest_version)
                 download_url = version_info.download_url
