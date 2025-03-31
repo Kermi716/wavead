@@ -13,7 +13,7 @@ encoding.default = 'CP1251'
 local u8 = encoding.UTF8
 local new = imgui.new
 
-local my_script_version = "1.1" 
+local my_script_version = "1.2" 
 local download_url = ""
 local json_url = "https://raw.githubusercontent.com/Kermi716/wavead/refs/heads/main/autoupdate.json" 
 local update_available = new.bool(false)
@@ -1162,7 +1162,6 @@ imgui.OnFrame(
                 saveJson("Spamer.json", newConfig)
                 config = newConfig
             end
-            imgui.SameLine()
             if imgui.CollapsingHeader(u8'Обновления') then
                 imgui.Text(u8("Текущая версия: " .. my_script_version))
                 if update_available[0] then
