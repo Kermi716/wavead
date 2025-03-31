@@ -62,20 +62,20 @@ function download_update()
         if response.status_code == 200 then
             local utf8_text = response.text
             if utf8_text and utf8_text ~= "" then
-                -- Преобразуем UTF-8 в CP1251
-                local cp1251_text = encoding.convert(utf8_text, "UTF8", "CP1251")
-                if cp1251_text then
-                    local file = io.open("moonloader\\Rebild.lua", "wb")
-                    if file then
-                        file:write(cp1251_text)
-                        file:close()
-                        sampAddChatMessage("{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
-                        addPopupMessage("{00FFFF}Обновление загружено. Перезапустите скрипт!")
-                    else
-                        sampAddChatMessage("{FF0000}[WaveAd] Ошибка при записи файла обновления!", 0xFF0000)
-                    end
+                -- Перекодируем из UTF-8 в CP1251
+                local cp1251_text = encoding.UTF8:encode(utf8_text, 'CP1251')
+                if not cp1251_text then
+                    sampAddChatMessage("{FF0000}[WaveAd] Ошибка перекодировки в CP1251!", 0xFF0000)
+                    return
+                end
+                local file = io.open("moonloader\\Rebild.lua", "wb")
+                if file then
+                    file:write(cp1251_text) -- Записываем в CP1251
+                    file:close()
+                    sampAddChatMessage("{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
+                    addPopupMessage("{00FFFF}Обновление загружено. Перезапустите скрипт!")
                 else
-                    sampAddChatMessage("{FF0000}[WaveAd] Ошибка преобразования текста в CP1251!", 0xFF0000)
+                    sampAddChatMessage("{FF0000}[WaveAd] Ошибка при записи файла обновления!", 0xFF0000)
                 end
             else
                 sampAddChatMessage("{FF0000}[WaveAd] Получены некорректные данные обновления!", 0xFF0000)
