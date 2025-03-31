@@ -20,33 +20,17 @@ local json_url = "https://raw.githubusercontent.com/Kermi716/wavead/main/autoupd
 local update_available = new.bool(false)
 local update_version = new.char[32]("")
 
-function compareVersions(v1, v2)
-    local v1_parts = {v1:match("(%d+)%.(%d+)%.?(%d*)")}
-    local v2_parts = {v2:match("(%d+)%.(%d+)%.?(%d*)")}
-    for i = 1, 3 do
-        local n1 = tonumber(v1_parts[i]) or 0
-        local n2 = tonumber(v2_parts[i]) or 0
-        if n1 < n2 then return -1 end
-        if n1 > n2 then return 1 end
-    end
-    return 0
-end
-
 function check_for_updates()
     local response = requests.get(json_url)
     if response.status_code == 200 then
         local version_info = json.decode(response.text)
-        if version_info.latest_version and version_info.download_url then
-            local comparison = compareVersions(my_script_version, version_info.latest_version)
-            if comparison < 0 then
-                update_available[0] = true
-                update_version = new.char[32](version_info.latest_version)
-                download_url = version_info.download_url
+        if version_info.latest_version ~= nil and version_info.download_url ~= nil then
+            if version_info.latest_version ~= my_script_version then
                 sampAddChatMessage("{ADFF2F}[WaveAd] Доступно обновление! Последняя версия: " .. version_info.latest_version)
                 sampAddChatMessage("{00FFFF}Доступно обновление: " .. version_info.latest_version)
+                download_url = version_info.download_url
             else
-                sampAddChatMessage("{ADFF2F}[WaveAd] У вас установлена последняя версия.")
-                update_available[0] = false
+                sampAddChatMessage("[MyScript] У вас установлена последняя версия.", 0xFFFFFF)
             end
         else
             sampAddChatMessage("{FF0000}[WaveAd] Неверный формат файла версии")
@@ -60,28 +44,12 @@ function download_update()
     if download_url ~= "" then
         local response = requests.get(download_url)
         if response.status_code == 200 then
-            local utf8_text = response.text
-            if utf8_text and utf8_text ~= "" then
-                -- Перекодируем из UTF-8 в CP1251
-                local cp1251_text = encoding.UTF8:encode(utf8_text, 'CP1251')
-                if not cp1251_text then
-                    sampAddChatMessage("{FF0000}[WaveAd] Ошибка перекодировки в CP1251!", 0xFF0000)
-                    return
-                end
-                local file = io.open("moonloader\\Rebild.lua", "wb")
-                if file then
-                    file:write(cp1251_text) -- Записываем в CP1251
-                    file:close()
-                    sampAddChatMessage("{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
-                    addPopupMessage("{00FFFF}Обновление загружено. Перезапустите скрипт!")
-                else
-                    sampAddChatMessage("{FF0000}[WaveAd] Ошибка при записи файла обновления!", 0xFF0000)
-                end
-            else
-                sampAddChatMessage("{FF0000}[WaveAd] Получены некорректные данные обновления!", 0xFF0000)
-            end
+            local file = io.open("moonloader\\MyScript.lua", "w")
+            file:write(response.text)
+            file:close()
+            sampAddChatMessage("{ADFF2F}[WaveAd] Новая версия успешно загружена. Перезапустите скрипт для обновления.", 0xFFFFFF)
         else
-            sampAddChatMessage("{FF0000}[WaveAd] Невозможно загрузить новую версию. Код ошибки: " .. response.status_code, 0xFF0000)
+            sampAddChatMessage("{FF0000}[WaveAd] Ошибка при записи файла обновления!", 0xFF0000)
         end
     else
         sampAddChatMessage("{FF0000}[WaveAd] Новая версия не обнаружена. Проверьте обновления!", 0xFFFFFF)
