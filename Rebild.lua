@@ -1162,6 +1162,24 @@ imgui.OnFrame(
                 saveJson("Spamer.json", newConfig)
                 config = newConfig
             end
+            imgui.SameLine()
+            if imgui.CollapsingHeader(u8'Обновления') then
+                imgui.Text(u8("Текущая версия: " .. my_script_version))
+                if update_available[0] then
+                    imgui.Text(u8("Доступна версия: " .. ffi.string(update_version)))
+                end
+                
+                if imgui.Button(u8'Проверить обновления') then
+                    lua_thread.create(check_for_updates)
+                end
+                
+                if update_available[0] then
+                    imgui.SameLine()
+                    if imgui.Button(u8'Загрузить обновление') then
+                        lua_thread.create(download_update)
+                    end
+                end
+            end
             if imgui.CollapsingHeader(u8'Telegram') then
                 imgui.SetNextItemWidth(200)
                 imgui.InputTextWithHint(u8'Chat ID', u8'Введите Chat ID', telegramChatId, 64)
